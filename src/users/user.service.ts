@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserInputDTO } from "./dtos/createUserInput.dto";
 import { UpdateUserInputDTO } from "./dtos/updateUserInput.dto";
+import { PrismaService } from "src/prisma.service";
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,8 @@ export class UsersService {
       password: '1234',
     },
   ];
+
+  constructor(private prisma: PrismaService) {}
 
   findAll(id: number) {
     if (id) {
