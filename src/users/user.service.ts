@@ -1,80 +1,51 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { CreateUserInputDTO } from "./dtos/createUserInput.dto";
-import { UpdateUserInputDTO } from "./dtos/updateUserInput.dto";
-import { PrismaService } from "src/prisma.service";
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { CreateUserInputDTO } from './dtos/createUserInput.dto';
+import { UpdateUserInputDTO } from './dtos/updateUserInput.dto';
+import { PrismaService } from '../prisma.service'; // Caminho relativo ajustado
 
 @Injectable()
 export class UsersService {
-  private users = [
-    {
-      id: 1,
-      name: 'Kamil',
-      email: 'kamil@kamil',
-      password: '1234',
-    },
-    {
-      id: 2,
-      name: 'Paula',
-      email: 'paula@gamil',
-      password: '1234',
-    },
-    {
-      id: 3,
-      name: 'Marcio',
-      email: 'marcio@gmail',
-      password: '1234',
-    },
-  ];
-
   constructor(private prisma: PrismaService) {}
 
-  findAll(id: number) {
+  async findAll(id: number) {
     if (id) {
-      const user = this.users.find((user) => user.id === id);
-      return [user].filter((user) => user);
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      return user;
     }
 
-    return this.users;
+    const users = await this.prisma.user.findMany();
+    return users;
   }
 
-  findById(id: number) {
-    const user = this.users.find((user) => user.id === id);
+  async findById(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (user) return user;
 
     throw new NotFoundException();
   }
 
-  create(body: CreateUserInputDTO) {
-    const user = this.users.find((user) => user.email === body.email);
+  async create(body: CreateUserInputDTO) {
+    const user = await this.prisma.user.findUnique({ where: { email: body.email } });
     if (user) {
-      throw new BadRequestException("User already exists");
+      throw new BadRequestException('User already exists');
     }
-    const lastUser = this.users[this.users.length - 1];
-    const newUser = {
-      id: lastUser.id + 1,
-      ...body,
-    };
-    this.users.push(newUser);
+    const newUser = await this.prisma.user.create({ data: body });
     return newUser;
   }
 
-  update( id: number, body: UpdateUserInputDTO) {
-    const user = this.users.find((user) => user.id === id);
+  async update(id: number, body: UpdateUserInputDTO) {
+    let user = await this.findById(id);
     if (!user) throw new NotFoundException();
-      this.users.map((user) => {
-        if (user.id === id) {
-          return { ...user, ...body };
-        }
-        return user;
-      });
+
+    user = await this.prisma.user.update({ where: { id }, data: body });
     
-    return { ...user, ...body };
+    return user;
   }
 
-  delete(id: number) {
-    const user = this.users.find((user) => user.id === id);
+  async delete(id: number) {
+    const user = await this.findById(id);
     if (!user) throw new NotFoundException();
-    this.users = this.users.filter((user) => user.id !== id);
-    return '{ massage: User deleted }';
+    await this.prisma.user.delete({ where: { id } });
+    return '{ message: User deleted }';
   }
 }
