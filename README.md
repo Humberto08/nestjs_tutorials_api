@@ -38,6 +38,9 @@ npm run start:dev
  http://localhost:3000.
 ```
 
+5 - Acesse a documentação api em:
+```
+http://localhost:3000/api
 ## Testes
 
 Executa os testes usando Jest.
