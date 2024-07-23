@@ -2,19 +2,25 @@ import { Body, Controller, DefaultValuePipe, Delete, Get,  Param, ParseIntPipe, 
 import { CreateUserInputDTO } from './dtos/createUserInput.dto';
 import { UpdateUserInputDTO } from './dtos/updateUserInput.dto';
 import { UsersService } from './user.service';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FindUserByIdOutputDTO } from './dtos/findUserByIdOutput.dto';
 
 
-
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  findAll(@Query('id', new DefaultValuePipe(0), ParseIntPipe) id: 0) {
+  @ApiResponse({ type: FindUserByIdOutputDTO, isArray: true, status: 200 })
+  @ApiQuery({ name: 'id', type: Number, required: false })
+  findAll(@Query('id', new DefaultValuePipe(0), ParseIntPipe) id = 0) {
   return this.usersService.findAll(id);
   }
 
+
   @Get(':id')
+  @ApiResponse({ type: FindUserByIdOutputDTO, status: 200 })
   findById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findById(id);
   }

@@ -1,36 +1,4 @@
-// import { Injectable } from '@nestjs/common';
-// import { CreateProductInputDto } from './dto/createProductInput.dto';
-// import { UpdateProductInputDto } from './dto/updateProductInput.dto';
-// import { PrismaService } from 'src/prisma.service';
-
-// @Injectable()
-// export class ProductsService {
-//   constructor(private prisma: PrismaService) {}
-
-//   create(createProductDto: CreateProductInputDto) {
-//     return 'This action adds a new product';
-//   }
-
-//   findAll() {
-//     return `This action returns all products`;
-//   }
-
-//   findOne(id: number) {
-//     return `This action returns a #${id} product`;
-//   }
-
-//   update(id: number, updateProductInputDto: UpdateProductInputDto) {
-//     return `This action updates a #${id} product`;
-//   }
-
-//   remove(id: number) {
-//     return `This action removes a #${id} product`;
-//   }
-// }
-
-
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-
 import { PrismaService } from '../prisma.service';
 import { CreateProductInputDTO } from './dto/createProductInput.dto';
 import { UpdateProductInputDTO } from './dto/updateProductInput.dto';
